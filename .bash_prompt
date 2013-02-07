@@ -1,0 +1,77 @@
+
+# Original: https://github.com/jmalloc/dotfiles
+
+function build-prompt {
+    local RED='\[\033[01;31m\]'
+    local GREEN='\[\033[01;32m\]'
+    local YELLOW='\[\033[01;33m\]'
+    local BLUE='\[\033[01;34m\]'
+    local PINK='\[\033[01;35m\]'
+    local TEAL='\[\033[01;36m\]'
+    local WHITE='\[\033[01;37m\]'
+    local RESET='\[\033[00m\]'
+
+    local USER_INFO="${GREEN}${USER}${RESET}"
+    local USER_SEPARATOR="@"
+    local HOST_INFO=
+    local HOST_SEPARATOR=" "
+
+    local LOCATION="${BLUE}\w${RESET}"
+    
+    if [[ "${USER}" == "banana" ]]; then
+        USER_INFO=""
+        USER_SEPARATOR=""
+    fi
+
+    if [[ "${USER}" == "root" ]]; then
+        USER_INFO=""
+        USER_SEPARATOR=""
+        HOST_INFO="${RED}\h${RESET}"
+    else
+        HOST_INFO="${USER_SEPARATOR}${GREEN}\h${RESET}"
+    fi
+
+    local BRANCH="$(git branch 2>/dev/null | egrep '^\*' | cut -c3-)"
+
+    if [[ $BRANCH != "" ]]; then
+        local GIT_ROOT="$(git rev-parse --show-toplevel)"
+        local REPO_NAME="$(basename $GIT_ROOT)"
+        local CURRENT_DIR=
+        local NAME_REV=
+        local BRANCH_INFO=
+
+        if [[ "$(pwd)" == $GIT_ROOT ]]; then
+            CURRENT_DIR=""
+        else
+            CURRENT_DIR=" $(pwd | cut -c$(expr 2 + ${#GIT_ROOT})-)"
+        fi
+
+        if [[ $BRANCH == "(no branch)" ]]; then
+            NAME_REV=$(git name-rev --name-only --tags --no-undefined HEAD 2>/dev/null)
+        fi
+
+        if [[ $NAME_REV == "" ]]; then
+            NAME_REV=$(git name-rev --name-only --no-undefined HEAD 2>/dev/null)
+        fi
+
+        if [[ $NAME_REV == "" ]]; then
+            NAME_REV=$(git rev-parse --short HEAD)
+        fi
+
+        if [[ $BRANCH == "develop" ]]; then
+            BRANCH_INFO="${GREEN}develop${RESET}"
+        elif [[ $BRANCH == "master" ]]; then
+            BRANCH_INFO="${YELLOW}master${RESET}"
+        elif [[ $BRANCH == "(no branch)" ]]; then
+            BRANCH_INFO="${RED}${NAME_REV}${RESET}"
+        else
+            BRANCH_INFO="${WHITE}${BRANCH}${RESET}"
+        fi
+
+        LOCATION="${GREEN}${REPO_NAME}${RESET} $BRANCH_INFO${BLUE}${CURRENT_DIR}${RESET}"
+    fi
+
+    PS1="${USER_INFO}${HOST_INFO}${HOST_SEPARATOR}${LOCATION} "
+}
+
+PROMPT_COMMAND=build-prompt
