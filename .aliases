@@ -6,7 +6,7 @@ alias .....="cd ../../../.."
 
 # Programs
 alias sublime="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl" # Sublime Text 3
-alias youtube="youtube-dl -c -r 500k -o \"%(uploader)s.%(upload_date)s.%(stitle)s.$(ext)s\" --write-info --write-description"
+alias youtube="youtube-dl -c -r 500k -o \"%(uploader)s.%(upload_date)s.%(stitle)s.%(ext)s\" --write-info --write-description"
 
 # Shortcuts
 alias p="cd ~/Projects"

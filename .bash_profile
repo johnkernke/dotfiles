@@ -1,5 +1,5 @@
 # $PATH exports
-local PATH_LIST=(
+PATH_LIST=(
     "/opt/local/bin"
     "/opt/local/sbin"
     "/usr/local/mysql/bin"
@@ -8,20 +8,24 @@ local PATH_LIST=(
     "$HOME/bin"
 )
 
-local P=
+P=
 for P in "${PATH_LIST[@]}"; do
     if [ -d $P ]; then
         PATH="$P:$PATH"
     fi
 done
 
+unset PATH_LIST
+unset P
 export PATH=$PATH
 
 # Load extra dotfiles
-local FILE=
+FILE=
 for FILE in ~/.{bash_prompt,exports,aliases,functions}; do
     [ -r "$FILE" ] && source "$FILE"
 done
+
+unset FILE
 
 # Load the sub (https://github.com/37signals/sub) nern
 if [ -d "$HOME/.nern" ]; then
